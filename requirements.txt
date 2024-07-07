@@ -1,6 +1,5 @@
-python3 -m pip install --upgrade pip
 Flask==2.0.1
 opencv-python-headless==4.5.3.56
-numpy==1.19.3; python_version >= "3.6" and sys_platform == "darwin"
+numpy==1.19.3
 Werkzeug==2.0.1
 gunicorn==20.1.0
