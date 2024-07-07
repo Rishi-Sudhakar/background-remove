@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/animation.gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --secondary-color: #4b0082;
+            --text-color: #ffffff;
+            --bg-color: #121212;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background-color: rgba(74, 20, 140, 0.1);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background-color: rgba(138, 43, 226, 0.2);
+            color: var(--text-color);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: rgba(138, 43, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .upload-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 4rem;
+        }
+
+        #file-upload {
+            display: none;
+        }
+
+        .file-upload-label {
+            background-color: rgba(138, 43, 226, 0.2);
+            color: var(--text-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-upload-label:hover {
+            background-color: rgba(138, 43, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .preview {
+            margin-top: 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .preview img {
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .features {
+            padding: 4rem 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: rgba(74, 20, 140, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        footer {
+            background-color: rgba(74, 20, 140, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .loader {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-color);
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Background Remover</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#upload">Upload</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <h1>Remove Image Backgrounds</h1>
+            <p>Upload your image and get a clean, background-free result in seconds.</p>
+            <a href="#upload" class="btn">Get Started</a>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Fast Processing</h3>
+                        <p>Remove backgrounds in seconds with our advanced algorithm.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <h3>High Quality</h3>
+                        <p>Get crisp, clean edges for professional-looking results.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure</h3>
+                        <p>Your images are processed securely and never stored.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💻</div>
+                        <h3>Easy to Use</h3>
+                        <p>Simple interface for quick and effortless background removal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="upload" class="upload-section">
+            <div class="container">
+                <h2>Upload Your Image</h2>
+                <label for="file-upload" class="file-upload-label">Choose File</label>
+                <input type="file" id="file-upload" accept="image/*">
+                <div class="preview">
+                    <div>
+                        <h3>Original Image</h3>
+                        <img id="original-preview" src="" alt="Original image preview">
+                    </div>
+                    <div>
+                        <h3>Processed Image</h3>
+                        <img id="processed-preview" src="" alt="Processed image preview">
+                    </div>
+                </div>
+                <button id="process-btn" class="btn" style="display: none;">Process Image</button>
+                <button id="download-btn" class="btn" style="display: none;">Download Result</button>
+                <div class="loader"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Background Remover. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize Locomotive Scroll
+        const scroll = new LocomotiveScroll({
+            el: document.querySelector('[data-scroll-container]'),
+            smooth: true
+        });
+
+        // GSAP animations
+        gsap.from('.hero h1', { opacity: 0, y: 50, duration: 1, delay: 0.5 });
+        gsap.from('.hero p', { opacity: 0, y: 50, duration: 1, delay: 0.7 });
+        gsap.from('.hero .btn', { opacity: 0, y: 50, duration: 1, delay: 0.9 });
+
+        // ScrollMagic
+        const controller = new ScrollMagic.Controller();
+
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach((card, index) => {
+            new ScrollMagic.Scene({
+                triggerElement: card,
+                triggerHook: 0.8,
+                reverse: false
+            })
+            .setTween(gsap.from(card, { opacity: 0, y: 50, duration: 0.5, delay: index * 0.1 }))
+            .addTo(controller);
+        });
+
+        // File upload and preview
+        const fileUpload = document.getElementById('file-upload');
+        const originalPreview = document.getElementById('original-preview');
+        const processedPreview = document.getElementById('processed-preview');
+        const processBtn = document.getElementById('process-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const loader = document.querySelector('.loader');
+
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    originalPreview.src = e.target.result;
+                    processBtn.style.display = 'inline-block';
+                    processedPreview.src = '';
+                    downloadBtn.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        processBtn.addEventListener('click', () => {
+            loader.style.display = 'block';
+            processBtn.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', fileUpload.files[0]);
+
+            fetch('/process', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                processedPreview.src = url;
+                loader.style.display = 'none';
+                downloadBtn.style.display = 'inline-block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loader.style.display = 'none';
+                processBtn.style.display = 'inline-block';
+                alert('An error occurred while processing the image.');
+            });
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'processed_image.png';
+            link.href = processedPreview.src;
+            link.click();
+        });
+    </script>
+</body>
+</html>
