@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
@@ -32,6 +32,10 @@ def remove_background(input_path, output_path):
     
     # Save output image
     cv2.imwrite(output_path, result)
+
+@app.route('/')
+def serve_html():
+    return send_from_directory('.', 'index.html')
 
 @app.route('/process', methods=['POST'])
 def process_image():
