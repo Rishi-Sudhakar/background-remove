@@ -3,7 +3,8 @@
   "builds": [
     {
       "src": "app.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb" }
     }
   ],
   "routes": [
@@ -11,5 +12,8 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ]
+  ],
+  "scripts": {
+    "postinstall": "pip install --upgrade pip && pip install -r requirements.txt"
+  }
 }
