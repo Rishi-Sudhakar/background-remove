@@ -13,7 +13,5 @@
       "dest": "app.py"
     }
   ],
-  "scripts": {
-    "postinstall": "pip install --upgrade pip && pip install -r requirements.txt"
-  }
+  "buildCommand": "pip install setuptools wheel && pip install -r requirements.txt"
 }
